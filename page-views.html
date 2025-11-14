@@ -1,0 +1,1531 @@
+  <div class="content-wrapper">
+    <div id="page-dashboard" class="page-view active">
+      <h2 class="page-title">Dashboard</h2>
+      <div class="row">
+        <div class="col-md-3">
+          <div class="stat-card blue">
+            <h3 id="stat-total-coc">0</h3>
+            <p>Total COC (hrs)</p>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="stat-card green">
+            <h3 id="stat-active-employees">0</h3>
+            <p>Active Employees</p>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="stat-card orange">
+            <h3 id="stat-uncertified">0</h3>
+            <p>Uncertified Logs</p>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="stat-card violet">
+            <h3 id="stat-expiring-soon">0</h3>
+            <p>Expiring in 30 Days (hrs)</p>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <h5 class="mb-0"><i class="bi bi-bell"></i> Alerts & Notifications</h5>
+        </div>
+        <div class="card-body" id="alerts-container">
+          <div class="loading">Loading alerts...</div>
+        </div>
+      </div>
+    </div>
+
+    <div id="page-employees" class="page-view">
+      <h2 class="page-title">Manage Employees</h2>
+      <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#employeeModal" onclick="resetEmployeeForm()">
+        <i class="bi bi-plus-circle"></i> Add Employee
+      </button>
+      
+      <ul class="nav nav-tabs mb-3" id="employeeTabs">
+        <li class="nav-item">
+          <a class="nav-link active" data-bs-toggle="tab" href="#active-employees-tab">Active Employees</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" data-bs-toggle="tab" href="#inactive-employees-tab">Inactive Employees</a>
+        </li>
+      </ul>
+
+      <div class="tab-content">
+        <div class="tab-pane fade show active" id="active-employees-tab">
+          <div class="search-box">
+            <i class="bi bi-search search-icon"></i>
+            <input type="text" class="form-control" id="search-active-employees" placeholder="Search by Name, Office, or Position..." oninput="filterEmployees('active')">
+            <button class="clear-search" id="clear-active-search" onclick="clearEmployeeSearch('active')">
+              <i class="bi bi-x-circle-fill"></i>
+            </button>
+          </div>
+          <div class="card">
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table table-hover">
+                  <thead>
+                    <tr>
+                      <th>Employee ID</th>
+                      <th>Name</th>
+                      <th>Office</th>
+                      <th>Position</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="activeEmployeesTableBody">
+                    <tr><td colspan="5" class="text-center">Loading...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-pane fade" id="inactive-employees-tab">
+          <div class="search-box">
+            <i class="bi bi-search search-icon"></i>
+            <input type="text" class="form-control" id="search-inactive-employees" placeholder="Search by Name, Office, or Position..." oninput="filterEmployees('inactive')">
+            <button class="clear-search" id="clear-inactive-search" onclick="clearEmployeeSearch('inactive')">
+              <i class="bi bi-x-circle-fill"></i>
+            </button>
+          </div>
+          <div class="card">
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table table-hover">
+                  <thead>
+                    <tr>
+                      <th>Employee ID</th>
+                      <th>Name</th>
+                      <th>Office</th>
+                      <th>Position</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="inactiveEmployeesTableBody">
+                    <tr><td colspan="5" class="text-center">Loading...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="page-log-overtime" class="page-view">
+      <h2 class="page-title">Log Overtime</h2>
+
+      <!-- Employee/Month/Year Selection -->
+      <div class="card mb-3">
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-4 mb-3">
+              <label class="form-label">Employee <span class="text-danger">*</span></label>
+              <div class="searchable-select-container">
+                <div class="search-box">
+                  <i class="bi bi-search search-icon"></i>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="ot-employee-search"
+                    placeholder="Search employee by name or ID..."
+                    autocomplete="off"
+                    oninput="filterOvertimeEmployees()"
+                    onfocus="showOvertimeEmployeeDropdown()"
+                  >
+                  <input type="hidden" id="ot-employee">
+                </div>
+                <div class="searchable-dropdown" id="ot-employee-dropdown" style="display: none;">
+                  <div class="dropdown-list" id="ot-employee-list"></div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4 mb-3">
+              <label class="form-label">Month <span class="text-danger">*</span></label>
+              <select class="form-select" id="ot-month" onchange="updateOvertimeContext()">
+                <option value="">Select Month</option>
+                <option value="0">January</option>
+                <option value="1">February</option>
+                <option value="2">March</option>
+                <option value="3">April</option>
+                <option value="4">May</option>
+                <option value="5">June</option>
+                <option value="6">July</option>
+                <option value="7">August</option>
+                <option value="8">September</option>
+                <option value="9">October</option>
+                <option value="10">November</option>
+                <option value="11">December</option>
+              </select>
+              <div class="form-text text-muted d-none" id="ot-month-status"></div>
+            </div>
+            <div class="col-md-4 mb-3">
+              <label class="form-label">Year <span class="text-danger">*</span></label>
+              <select class="form-select" id="ot-year" onchange="updateOvertimeMonthOptions()"></select>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Progress Indicators -->
+      <div class="row mb-3" id="ot-progress-section" style="display:none;">
+        <div class="col-md-6">
+          <div class="card">
+            <div class="card-body">
+              <h6 class="text-muted mb-2">
+                <i class="bi bi-calendar-month"></i> Monthly Accrual
+                <span class="spinner-border spinner-border-sm ms-2 d-none" id="ot-monthly-spinner" role="status">
+                  <span class="visually-hidden">Loading...</span>
+                </span>
+              </h6>
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <span class="h4 mb-0" id="ot-monthly-hours">0.0</span>
+                <span class="text-muted">/ 40.0 hours</span>
+              </div>
+              <div class="progress" style="height: 8px;">
+                <div class="progress-bar" id="ot-monthly-progress" role="progressbar" style="width: 0%"></div>
+              </div>
+              <small class="text-muted mt-1 d-block">Cap: 40 hours per month</small>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="card">
+            <div class="card-body">
+              <h6 class="text-muted mb-2">
+                <i class="bi bi-hourglass-split"></i> Total Balance
+                <span class="spinner-border spinner-border-sm ms-2 d-none" id="ot-total-spinner" role="status">
+                  <span class="visually-hidden">Loading...</span>
+                </span>
+              </h6>
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <span class="h4 mb-0" id="ot-total-hours">0.0</span>
+                <span class="text-muted">/ 120.0 hours</span>
+              </div>
+              <div class="progress" style="height: 8px;">
+                <div class="progress-bar" id="ot-total-progress" role="progressbar" style="width: 0%"></div>
+              </div>
+              <small class="text-muted mt-1 d-block">Active + Uncertified credits</small>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Warning/Error Alerts -->
+      <div id="ot-alert-container"></div>
+
+      <!-- Entry Grid -->
+      <div class="card mb-3" id="ot-entry-section" style="display:none;">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h5 class="mb-0">Overtime Entries</h5>
+          <button type="button" id="ot-add-day-btn" class="btn btn-sm btn-primary" onclick="addOvertimeDay()">
+            Add Day
+          </button>
+        </div>
+        <div class="card-body">
+          <div id="ot-entry-loading">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Loading overtime entries...</span>
+            </div>
+            <p class="fw-semibold mb-0">Loading overtime entries...</p>
+          </div>
+          <div class="table-responsive d-none" id="ot-entry-table-wrapper">
+            <table class="table table-modern table-hover align-middle mb-0">
+              <thead>
+                <tr>
+                  <th scope="col" style="width: 140px;">Date <span class="text-danger">*</span></th>
+                  <th scope="col" style="width: 120px;">Type</th>
+                  <th scope="col">AM In</th>
+                  <th scope="col">AM Out</th>
+                  <th scope="col">PM In</th>
+                  <th scope="col">PM Out</th>
+                  <th scope="col" style="width: 120px;">Hours Worked</th>
+                  <th scope="col" style="width: 130px;">COC Earned</th>
+                  <th scope="col" style="width: 70px;">Action</th>
+                </tr>
+              </thead>
+              <tbody id="ot-entries-tbody">
+                <!-- Dynamic rows will be added here -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Grand Total -->
+      <div class="card mb-3" id="ot-total-section" style="display:none;">
+        <div class="card-body">
+          <div class="row g-4 align-items-center">
+            <div class="col-md-6">
+              <div class="d-flex align-items-center gap-3">
+                <div class="rounded-circle bg-primary-subtle text-primary d-flex align-items-center justify-content-center" style="width: 44px; height: 44px;">
+                  <i class="bi bi-clock-history"></i>
+                </div>
+                <div>
+                  <div class="text-muted text-uppercase small fw-semibold">Grand Total Hours Worked</div>
+                  <div class="h4 mb-0 text-primary"><span id="ot-grand-hours-worked">0.0</span> hrs</div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="d-flex align-items-center justify-content-md-end gap-3">
+                <div class="text-md-end">
+                  <div class="text-muted text-uppercase small fw-semibold">Grand Total COC Earned</div>
+                  <div class="h4 mb-0 text-success"><span id="ot-grand-coc-earned">0.0</span> hrs</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Submit Button -->
+      <div class="card" id="ot-submit-section" style="display:none;">
+        <div class="card-body text-end">
+          <button type="button" class="btn btn-lg btn-gradient" onclick="submitOvertimeForm()">
+            <span class="btn-text">Log Overtime</span>
+            <span class="spinner-border spinner-border-sm text-light d-none" role="status" id="ot-submit-spinner">
+              <span class="visually-hidden">Submitting...</span>
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div id="page-generate-cert" class="page-view">
+      <h2 class="page-title">Generate COC Certificate</h2>
+
+      <!-- Tabs -->
+      <ul class="nav nav-tabs mb-3" id="certTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button class="nav-link active" id="cert-employee-tab" data-bs-toggle="tab" data-bs-target="#cert-employee-pane" type="button">
+            By Employee
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="cert-batch-tab" data-bs-toggle="tab" data-bs-target="#cert-batch-pane" type="button">
+            Batch by Month
+          </button>
+        </li>
+      </ul>
+
+      <!-- Tab Content -->
+      <div class="tab-content" id="certTabContent">
+
+        <!-- Tab 1: By Employee -->
+        <div class="tab-pane fade show active" id="cert-employee-pane" role="tabpanel">
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <label class="form-label">Employee <span class="text-danger">*</span></label>
+              <div class="position-relative">
+                <div class="search-box">
+                  <i class="bi bi-search search-icon"></i>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="cert-employee-search"
+                    placeholder="Search employee by name or ID..."
+                    autocomplete="off"
+                    oninput="filterCertEmployees()"
+                    onfocus="showCertEmployeeDropdown()"
+                  >
+                  <input type="hidden" id="cert-employee">
+                </div>
+                <div class="searchable-dropdown" id="cert-employee-dropdown" style="display: none;">
+                  <div class="dropdown-list" id="cert-employee-list"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Uncertified Months Table -->
+          <div id="cert-employee-loading" style="display: none;" class="text-center py-4">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-2 text-muted">Loading uncertified overtime...</p>
+          </div>
+
+          <div id="cert-employee-table-section" style="display: none;">
+            <div class="card">
+              <div class="card-header">
+                <h5 class="mb-0">Uncertified Overtime by Month</h5>
+              </div>
+              <div class="card-body">
+                <div class="table-responsive">
+                  <table class="table table-hover">
+                    <thead>
+                      <tr>
+                        <th>Month/Year</th>
+                        <th>Entries</th>
+                        <th>Total Hours</th>
+                        <th>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody id="cert-months-tbody">
+                      <tr><td colspan="4" class="text-center">No uncertified overtime logs</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 2: Batch by Month -->
+        <div class="tab-pane fade" id="cert-batch-pane" role="tabpanel">
+          <div class="row mb-3">
+            <div class="col-md-3">
+              <label class="form-label">Month <span class="text-danger">*</span></label>
+              <select class="form-select" id="cert-batch-month" onchange="resetBatchForm()">
+                <option value="">Select Month</option>
+                <option value="0">January</option>
+                <option value="1">February</option>
+                <option value="2">March</option>
+                <option value="3">April</option>
+                <option value="4">May</option>
+                <option value="5">June</option>
+                <option value="6">July</option>
+                <option value="7">August</option>
+                <option value="8">September</option>
+                <option value="9">October</option>
+                <option value="10">November</option>
+                <option value="11">December</option>
+              </select>
+            </div>
+            <div class="col-md-3">
+              <label class="form-label">Year <span class="text-danger">*</span></label>
+              <select class="form-select" id="cert-batch-year" onchange="resetBatchForm()"></select>
+            </div>
+            <div class="col-md-3 d-flex align-items-end">
+              <button class="btn btn-primary" id="cert-batch-load-btn" onclick="loadBatchEmployees()">
+                <i class="bi bi-search"></i> Load
+              </button>
+            </div>
+          </div>
+
+          <!-- Batch Loading Spinner -->
+          <div id="cert-batch-loading" style="display: none;" class="text-center py-4">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-2 text-muted">Loading employees...</p>
+          </div>
+
+          <!-- No Employees Message -->
+          <div id="cert-batch-no-employees" style="display: none;" class="alert alert-info text-center" role="alert">
+            <i class="bi bi-info-circle me-2"></i>
+            No employees with uncertified overtime for this month
+          </div>
+
+          <!-- Batch Employees Table -->
+          <div id="cert-batch-table-section" style="display: none;">
+            <div class="card">
+              <div class="card-header">
+                <h5 class="mb-0">Employees with Uncertified Overtime</h5>
+              </div>
+              <div class="card-body">
+                <div class="table-responsive">
+                  <table class="table table-hover">
+                    <thead>
+                      <tr>
+                        <th><input type="checkbox" id="cert-batch-select-all" onchange="toggleBatchSelectAll()"></th>
+                        <th>Employee</th>
+                        <th>Office</th>
+                        <th>Hours</th>
+                        <th>Entries</th>
+                        <th>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody id="cert-batch-tbody">
+                      <tr><td colspan="6" class="text-center">Select month and year, then click Load</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                <!-- Date of Issuance -->
+                <div class="row mt-3">
+                  <div class="col-md-4">
+                    <label class="form-label">Date of Issuance <span class="text-danger">*</span></label>
+                    <input type="date" class="form-control" id="cert-batch-date-of-issuance" onchange="updateBatchValidUntil()" disabled>
+                    <small class="text-muted" id="cert-batch-date-help">Select month & year above to enable</small>
+                  </div>
+                  <div class="col-md-4">
+                    <label class="form-label">Valid Until</label>
+                    <input type="text" class="form-control" id="cert-batch-valid-until" readonly style="background-color: #f8f9fa;">
+                    <small class="text-muted">Auto-calculated (1 year minus 1 day from issuance)</small>
+                  </div>
+                </div>
+
+                <!-- Summary and Action -->
+                <div class="mt-3 d-flex justify-content-between align-items-center">
+                  <div>
+                    <strong>Selected: <span id="cert-batch-selected-count" class="text-primary">0</span> employees</strong>
+                    <span class="ms-3">Total: <span id="cert-batch-total-hours" class="text-primary">0.0</span> hours</span>
+                  </div>
+                  <button class="btn btn-primary" id="generate-all-certs-btn" onclick="generateBatchCertificates()">
+                    <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                    <span class="btn-text">
+                      <i class="bi bi-file-earmark-check"></i> Generate All Certificates
+                    </span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div id="page-view-certificates" class="page-view">
+      <h2 class="page-title">View COC Certificates</h2>
+
+      <!-- Filters -->
+      <div class="row mb-3">
+        <div class="col-md-3">
+          <label class="form-label">Year</label>
+          <select class="form-select" id="cert-view-year" onchange="loadCertificates()">
+            <option value="">All Years</option>
+          </select>
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Month</label>
+          <select class="form-select" id="cert-view-month" onchange="loadCertificates()">
+            <option value="">All Months</option>
+            <option value="0">January</option>
+            <option value="1">February</option>
+            <option value="2">March</option>
+            <option value="3">April</option>
+            <option value="4">May</option>
+            <option value="5">June</option>
+            <option value="6">July</option>
+            <option value="7">August</option>
+            <option value="8">September</option>
+            <option value="9">October</option>
+            <option value="10">November</option>
+            <option value="11">December</option>
+          </select>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Employee</label>
+          <input type="text" class="form-control" id="cert-view-search" placeholder="Search by employee name..." oninput="loadCertificates()">
+        </div>
+        <div class="col-md-2 d-flex align-items-end">
+          <button class="btn btn-secondary w-100" onclick="clearCertFilters()">
+            <i class="bi bi-x-circle"></i> Clear
+          </button>
+        </div>
+      </div>
+
+      <!-- Certificates Table -->
+      <div class="card">
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-hover table-sm">
+              <thead>
+                <tr>
+                  <th style="width: 15%;">Certificate ID</th>
+                  <th style="width: 20%;">Employee</th>
+                  <th style="width: 15%;">Period</th>
+                  <th style="width: 10%;">Hours</th>
+                  <th style="width: 10%;">Date of Issuance</th>
+                  <th style="width: 10%;">Valid Until</th>
+                  <th style="width: 8%;">Status</th>
+                  <th style="width: 12%;">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="certificatesTableBody">
+                <tr><td colspan="8" class="text-center">Select filters and load certificates</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <!-- Loading Spinner (shown inside table area) -->
+          <div id="cert-view-loading" style="display: none;" class="text-center py-4">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-2 text-muted">Loading certificates...</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="page-employee-ledger" class="page-view">
+      <h2 class="page-title">Employee Ledger</h2>
+      <div class="row mb-3">
+        <div class="col-md-4">
+          <label class="form-label">Select Employee</label>
+          <select class="form-select" id="ledger-employee" onchange="loadEmployeeLedger()"></select>
+        </div>
+        <div class="col-md-5">
+          <div class="alert alert-info mt-4">
+            <strong><i class="bi bi-info-circle"></i> Current Balance: <span id="ledger-balance">0.00</span> hours</strong>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <button class="btn btn-success w-100 mt-4" onclick="exportLedgerToExcel()" id="export-ledger-btn" disabled>
+            <i class="bi bi-file-earmark-excel"></i> Export to Excel
+          </button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-hover table-sm">
+              <thead class="table-light">
+                <tr>
+                  <th>Date</th>
+                  <th>Particulars</th>
+                  <th class="text-end">Earned</th>
+                  <th class="text-end">Used</th>
+                  <th class="text-end">Total</th>
+                  <th class="text-center">View Details</th>
+                </tr>
+              </thead>
+              <tbody id="ledgerTableBody">
+                <tr><td colspan="6" class="text-center">Select an employee</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="page-log-cto" class="page-view">
+      <h2 class="page-title">CTO Application</h2>
+
+      <!-- Tabs Navigation -->
+      <ul class="nav nav-tabs mb-3" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button class="nav-link active" id="cto-log-tab" data-bs-toggle="tab" data-bs-target="#cto-log-content" type="button" role="tab">
+            <i class="bi bi-plus-circle"></i> Log CTO Application
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="cto-list-tab" data-bs-toggle="tab" data-bs-target="#cto-list-content" type="button" role="tab">
+            <i class="bi bi-list-ul"></i> List of CTO Applications
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="cto-calendar-tab" data-bs-toggle="tab" data-bs-target="#cto-calendar-content" type="button" role="tab">
+            <i class="bi bi-calendar3"></i> CTO Calendar
+          </button>
+        </li>
+      </ul>
+
+      <!-- Tabs Content -->
+      <div class="tab-content">
+        <!-- Tab 1: Log CTO Application -->
+        <div class="tab-pane fade show active" id="cto-log-content" role="tabpanel">
+          <div class="card">
+            <div class="card-body">
+              <form id="ctoForm">
+                <input type="hidden" id="cto-ledger-id" value="">
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label">Employee <span class="text-danger">*</span></label>
+                    <select class="form-select" id="cto-employee" onchange="showCtoBalance()" required></select>
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label">Date of Filing <span class="text-danger">*</span></label>
+                    <input type="date" class="form-control" id="cto-filing-date" onchange="validateFilingDate(); enableInclusiveDates();" required>
+                    <div id="cto-filing-date-error" class="text-danger small mt-1" style="display: none;">
+                      <i class="bi bi-exclamation-circle"></i> Filing date cannot be in the future
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label">Inclusive Date From <span class="text-danger">*</span></label>
+                    <input type="date" class="form-control" id="cto-date-from" onchange="generateDayBreakdown()" disabled required>
+                    <div id="cto-date-from-error" class="text-danger small mt-1" style="display: none;">
+                      <i class="bi bi-exclamation-circle"></i> Date of Filing cannot be later than Inclusive Date From
+                    </div>
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label">Inclusive Date To <span class="text-danger">*</span></label>
+                    <input type="date" class="form-control" id="cto-date-to" onchange="generateDayBreakdown()" disabled required>
+                    <div id="cto-date-to-error" class="text-danger small mt-1" style="display: none;">
+                      <i class="bi bi-exclamation-circle"></i> Inclusive Date To cannot be earlier than Inclusive Date From
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Day Breakdown Section -->
+                <div id="cto-day-breakdown-section" style="display: none;" class="mb-3">
+                  <div class="card">
+                    <div class="card-header bg-light">
+                      <h6 class="mb-0"><i class="bi bi-calendar-check"></i> Day Breakdown</h6>
+                      <small class="text-muted">Select Whole Day (8 hrs) or Half Day (4 hrs) for each date</small>
+                    </div>
+                    <div class="card-body">
+                      <div id="cto-day-breakdown-content"></div>
+                      <div class="mt-3 p-2 bg-light rounded">
+                        <strong>Total Hours: <span id="cto-total-hours-display" class="text-primary">0</span> hours</strong>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Restore Remarks Section (shown only when reducing hours) -->
+                <div id="cto-restore-remarks-section" style="display: none;" class="mb-3">
+                  <div class="alert alert-info">
+                    <i class="bi bi-info-circle"></i>
+                    <strong>You are reducing hours, which will restore hours back to COC batches.</strong>
+                    <p class="mb-2 mt-2 small">Remarks (optional):</p>
+                    <textarea class="form-control" id="cto-restore-remarks" rows="3" placeholder="e.g., Correcting over-deduction, Date range adjustment, etc. (optional)"></textarea>
+                  </div>
+                </div>
+
+                <div class="mb-3">
+                  <div class="alert alert-info">
+                    <strong><i class="bi bi-wallet2"></i> Available Balance: <span id="cto-available-balance">0.00</span> hours</strong>
+                  </div>
+                </div>
+                <input type="hidden" id="cto-hours" value="0">
+                <input type="hidden" id="cto-original-hours" value="0">
+                <button type="submit" class="btn btn-primary" id="cto-submit-btn">
+                  <span class="btn-text"><i class="bi bi-check-circle"></i> <span id="cto-submit-text">Log CTO</span></span>
+                  <span class="spinner-border spinner-border-sm d-none ms-2" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                  </span>
+                </button>
+                <button type="button" class="btn btn-secondary ms-2" id="cto-cancel-btn" style="display: none;" onclick="cancelCtoEdit()">
+                  Cancel
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 2: List of CTO Applications -->
+        <div class="tab-pane fade" id="cto-list-content" role="tabpanel">
+          <div class="card">
+            <div class="card-header">
+              <h5 class="mb-0">CTO Applications</h5>
+            </div>
+            <div class="card-body">
+              <!-- Filters -->
+              <div class="row mb-3">
+                <div class="col-md-3">
+                  <label class="form-label">Employee</label>
+                  <select class="form-select" id="cto-list-employee" onchange="loadCtoApplications()">
+                    <option value="">All Employees</option>
+                  </select>
+                </div>
+                <div class="col-md-3">
+                  <label class="form-label">Status</label>
+                  <select class="form-select" id="cto-list-status" onchange="loadCtoApplications()">
+                    <option value="">All Status</option>
+                    <option value="Active">Active</option>
+                    <option value="Cancelled">Cancelled</option>
+                  </select>
+                </div>
+                <div class="col-md-3">
+                  <label class="form-label">&nbsp;</label>
+                  <button class="btn btn-primary d-block w-100" onclick="loadCtoApplications()">
+                    <i class="bi bi-arrow-clockwise"></i> Load Applications
+                  </button>
+                </div>
+              </div>
+              <div class="table-responsive">
+                <table class="table table-hover table-sm">
+                  <thead>
+                    <tr>
+                      <th style="width: 10%;">Filing Date</th>
+                      <th style="width: 15%;">Employee</th>
+                      <th style="width: 15%;">Inclusive Dates</th>
+                      <th style="width: 8%;">Hours Used</th>
+                      <th style="width: 15%;">DEDUCTED FROM</th>
+                      <th style="width: 8%;">Balance After</th>
+                      <th style="width: 8%;">Status</th>
+                      <th style="width: 12%;">Remarks</th>
+                      <th style="width: 9%;">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="ctoApplicationsTableBody">
+                    <tr><td colspan="9" class="text-center">Select filters and click "Load Applications"</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 3: CTO Calendar -->
+        <div class="tab-pane fade" id="cto-calendar-content" role="tabpanel">
+          <div class="card">
+            <div class="card-header">
+              <h5 class="mb-0">CTO Calendar View</h5>
+            </div>
+            <div class="card-body">
+              <div class="row mb-3">
+                <div class="col-md-4">
+                  <label class="form-label">Select Month</label>
+                  <select class="form-select" id="cto-calendar-month">
+                    <option value="0">January</option>
+                    <option value="1">February</option>
+                    <option value="2">March</option>
+                    <option value="3">April</option>
+                    <option value="4">May</option>
+                    <option value="5">June</option>
+                    <option value="6">July</option>
+                    <option value="7">August</option>
+                    <option value="8">September</option>
+                    <option value="9">October</option>
+                    <option value="10">November</option>
+                    <option value="11">December</option>
+                  </select>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label">Select Year</label>
+                  <select class="form-select" id="cto-calendar-year"></select>
+                </div>
+                <div class="col-md-4 d-flex align-items-end">
+                  <button class="btn btn-primary" onclick="loadCtoCalendar()">
+                    <i class="bi bi-calendar3"></i> Load Calendar
+                  </button>
+                </div>
+              </div>
+              <div id="cto-calendar-loading" class="text-center" style="display: none;">
+                <div class="spinner-border text-primary" role="status">
+                  <span class="visually-hidden">Loading...</span>
+                </div>
+                <p>Loading calendar...</p>
+              </div>
+              <div id="cto-calendar-container"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="page-configuration" class="page-view">
+      <h2 class="page-title">System Configuration</h2>
+      <div class="card">
+        <div class="card-body">
+          <form id="configForm">
+            <h5 class="mb-3">Accrual Multipliers</h5>
+            <div class="row mb-4">
+              <div class="col-md-4">
+                <label class="form-label">Regular Day Multiplier</label>
+                <input type="number" class="form-control" id="config-regular" step="0.01" value="1.25">
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">Rest Day Multiplier</label>
+                <input type="number" class="form-control" id="config-restday" step="0.01" value="1.30">
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">Holiday Multiplier</label>
+                <input type="number" class="form-control" id="config-holiday" step="0.01" value="2.00">
+              </div>
+            </div>
+            <h5 class="mb-3">Balance Caps</h5>
+            <div class="row mb-4">
+              <div class="col-md-6">
+                <label class="form-label">Monthly Accrual Cap (hours)</label>
+                <input type="number" class="form-control" id="config-monthly-cap" value="40">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Total Balance Cap (hours)</label>
+                <input type="number" class="form-control" id="config-total-cap" value="120">
+              </div>
+            </div>
+            <h5 class="mb-3">Expiration</h5>
+            <div class="row mb-4">
+              <div class="col-md-6">
+                <label class="form-label">Expiry Period (months)</label>
+                <input type="number" class="form-control" id="config-expiry-months" value="12">
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary" id="config-submit-btn">
+              <span class="btn-text"><i class="bi bi-save"></i> Save Configuration</span>
+              <span class="spinner-border spinner-border-sm d-none ms-2" role="status">
+                <span class="visually-hidden">Loading...</span>
+              </span>
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div id="page-libraries" class="page-view">
+      <h2 class="page-title">Libraries</h2>
+      <ul class="nav nav-tabs mb-3" id="libraryTabs">
+        <li class="nav-item">
+          <a class="nav-link active" data-bs-toggle="tab" href="#offices-tab">Offices</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" data-bs-toggle="tab" href="#positions-tab">Positions</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" data-bs-toggle="tab" href="#holidays-tab">Holidays</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" data-bs-toggle="tab" href="#signatory-tab">Signatory</a>
+        </li>
+      </ul>
+      <div class="tab-content">
+        <div class="tab-pane fade show active" id="offices-tab">
+          <button class="btn btn-primary mb-3" onclick="showAddLibraryModal('offices')">
+            <i class="bi bi-plus-circle"></i> Add Office
+          </button>
+          <div class="search-box">
+            <i class="bi bi-search search-icon"></i>
+            <input type="text" class="form-control" id="search-offices" placeholder="Search offices by name..." oninput="filterLibrary('offices')">
+            <button class="clear-search" id="clear-offices-search" onclick="clearLibrarySearch('offices')">
+              <i class="bi bi-x-circle-fill"></i>
+            </button>
+          </div>
+          <div class="card">
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table table-hover">
+                  <thead>
+                    <tr>
+                      <th>Office Name</th>
+                      <th style="width: 150px;">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="offices-list">
+                    <tr><td colspan="2" class="text-center">Loading...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="tab-pane fade" id="positions-tab">
+          <button class="btn btn-primary mb-3" onclick="showAddLibraryModal('positions')">
+            <i class="bi bi-plus-circle"></i> Add Position
+          </button>
+          <div class="search-box">
+            <i class="bi bi-search search-icon"></i>
+            <input type="text" class="form-control" id="search-positions" placeholder="Search positions by name..." oninput="filterLibrary('positions')">
+            <button class="clear-search" id="clear-positions-search" onclick="clearLibrarySearch('positions')">
+              <i class="bi bi-x-circle-fill"></i>
+            </button>
+          </div>
+          <div class="card">
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table table-hover">
+                  <thead>
+                    <tr>
+                      <th>Position Title</th>
+                      <th style="width: 150px;">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="positions-list">
+                    <tr><td colspan="2" class="text-center">Loading...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="tab-pane fade" id="holidays-tab">
+          <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#holidayModal" onclick="resetHolidayForm()">
+            <i class="bi bi-plus-circle"></i> Add Holiday
+          </button>
+          <div class="card">
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table table-hover">
+                  <thead>
+                    <tr>
+                      <th>Date</th>
+                      <th>Holiday Name</th>
+                      <th>Type</th>
+                      <th>Recurring</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="holidaysTableBody">
+                    <tr><td colspan="5" class="text-center">Loading...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="tab-pane fade" id="signatory-tab">
+          <div class="card">
+            <div class="card-header">
+              <h5 class="mb-0">Signatory Configuration</h5>
+              <small class="text-muted">Configure the signatory information for COC certificates</small>
+            </div>
+            <div class="card-body">
+              <div class="alert alert-info">
+                <i class="bi bi-info-circle me-2"></i>
+                <strong>Note:</strong> The signatory name and position will appear on all generated COC certificates. The name will be automatically converted to uppercase.
+              </div>
+              <form id="signatoryForm">
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label">Signatory Name <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="signatory-name" placeholder="Enter full name" required oninput="this.value = this.value.toUpperCase()" style="text-transform: uppercase;">
+                    <small class="text-muted">Automatically converts to UPPERCASE as you type</small>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-8 mb-3">
+                    <label class="form-label">Signatory Position/Title <span class="text-danger">*</span></label>
+                    <textarea class="form-control" id="signatory-position" rows="4" placeholder="Enter position/title (maximum 4 lines)" required></textarea>
+                    <small class="text-muted">Maximum 4 lines. Press Enter for new line. Example:<br>
+                      Regional Director<br>
+                      DPWH Regional Office II
+                    </small>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-12">
+                    <button type="button" class="btn btn-primary" onclick="saveSignatory()">
+                      <i class="bi bi-save"></i> Save Signatory Configuration
+                    </button>
+                  </div>
+                </div>
+              </form>
+              <div id="signatory-loading" style="display: none;" class="text-center py-4">
+                <div class="spinner-border text-primary" role="status">
+                  <span class="visually-hidden">Loading...</span>
+                </div>
+                <p class="mt-2 text-muted">Loading signatory information...</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="page-historical-balance" class="page-view">
+      <h2 class="page-title">Historical Balance Migration</h2>
+
+      <!-- About Section -->
+      <div class="row mb-4">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="mb-3"><i class="bi bi-info-circle text-info"></i> About This Feature</h5>
+              <p class="mb-2">
+                The Historical Balance feature is designed for <strong>migrating existing COC (Compensatory Overtime Credit) balances</strong> from your old system into the current system.
+              </p>
+              <p class="mb-0">
+                <span class="badge bg-warning text-dark"><i class="bi bi-exclamation-triangle"></i> One-Time Migration Tool</span>
+                This is not for regular ongoing entries.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Employee Selector -->
+      <div class="row mb-4">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-body">
+              <label class="form-label"><h5><i class="bi bi-person-circle"></i> Select Employee</h5></label>
+              <div class="searchable-select-container">
+                <div class="search-box">
+                  <i class="bi bi-search search-icon"></i>
+                  <input
+                    type="text"
+                    class="form-control form-control-lg"
+                    id="hist-employee-filter-search"
+                    placeholder="Search and select employee to view/add historical balance..."
+                    autocomplete="off"
+                    oninput="filterHistoricalEmployeeFilter()"
+                    onfocus="showHistoricalEmployeeFilterDropdown()"
+                  >
+                  <input type="hidden" id="hist-employee-filter">
+                </div>
+                <div class="searchable-dropdown" id="hist-employee-filter-dropdown" style="display: none;">
+                  <div class="dropdown-list" id="hist-employee-filter-list"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Content Section (shown after employee selection) -->
+      <div id="hist-content-section" style="display: none;">
+
+        <!-- Tabs -->
+        <ul class="nav nav-tabs mb-3" role="tablist">
+          <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="tab-add-hist" data-bs-toggle="tab" data-bs-target="#content-add-hist" type="button" role="tab">
+              <i class="bi bi-plus-circle"></i> Add Historical Balance
+            </button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="tab-list-hist" data-bs-toggle="tab" data-bs-target="#content-list-hist" type="button" role="tab">
+              <i class="bi bi-list-ul"></i> Historical Balance List
+            </button>
+          </li>
+        </ul>
+
+        <div class="tab-content">
+          <!-- Add Historical Balance Tab -->
+          <div class="tab-pane fade show active" id="content-add-hist" role="tabpanel">
+            <div class="card">
+              <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-database-fill-up"></i> Add Historical Balance</h5>
+              </div>
+              <div class="card-body">
+                <form id="historicalForm">
+                  <input type="hidden" id="hist-batch-id">
+                  <input type="hidden" id="hist-is-edit" value="false">
+                  <div class="row">
+                    <!-- Employee (read-only, pre-filled) -->
+                    <div class="col-md-4 mb-3">
+                      <label class="form-label">Employee <span class="text-danger">*</span></label>
+                      <input type="text" class="form-control" id="hist-employee-name" readonly style="background-color: #f8fafc; font-weight: 600;">
+                      <input type="hidden" id="hist-employee" required>
+                    </div>
+
+                  <!-- Month & Year -->
+                  <div class="col-md-2 mb-3">
+                    <label class="form-label">Month & Year <span class="text-danger">*</span></label>
+                    <input type="month" class="form-control" id="hist-month-year" required onchange="enableDateOfIssuance()">
+                    <div class="invalid-feedback">Required</div>
+                  </div>
+
+                  <!-- Date of Issuance -->
+                  <div class="col-md-2 mb-3">
+                    <label class="form-label">Date of Issuance <span class="text-danger">*</span></label>
+                    <input type="date" class="form-control" id="hist-date-issuance" disabled required>
+                    <div class="invalid-feedback">Required</div>
+                  </div>
+
+                  <!-- COC Earned -->
+                  <div class="col-md-2 mb-3">
+                    <label class="form-label">COC Earned (hrs) <span class="text-danger">*</span></label>
+                    <input type="number" class="form-control" id="hist-coc-earned" step="0.5" min="0" max="40" required oninput="validateHistoricalFields()">
+                    <small class="text-muted">Max: 40</small>
+                    <div class="invalid-feedback" id="hist-earned-feedback">0.5 - 40 hours</div>
+                  </div>
+
+                  <!-- COC Used -->
+                  <div class="col-md-2 mb-3">
+                    <label class="form-label">COC Used (hrs)</label>
+                    <input type="number" class="form-control" id="hist-coc-used" step="4" min="0" value="0" oninput="validateHistoricalFields()">
+                    <small class="text-muted">4 or 8 hr blocks</small>
+                    <div class="invalid-feedback" id="hist-used-feedback">Must be in blocks of 4 or 8</div>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <!-- Auto-calculated Fields -->
+                  <div class="col-md-8">
+                    <div class="alert alert-light border mb-0">
+                      <h6 class="mb-2"><i class="bi bi-calculator"></i> Auto-Calculated</h6>
+                      <div class="row">
+                        <div class="col-4">
+                          <label class="form-label mb-1 small">Remaining</label>
+                          <input type="text" class="form-control form-control-sm" id="hist-remaining" readonly style="background-color: #f8fafc; font-weight: 600;">
+                        </div>
+                        <div class="col-4">
+                          <label class="form-label mb-1 small">Valid Until</label>
+                          <input type="text" class="form-control form-control-sm" id="hist-valid-until" readonly style="background-color: #f8fafc; font-weight: 600;">
+                        </div>
+                        <div class="col-4">
+                          <label class="form-label mb-1 small">Status</label>
+                          <input type="text" class="form-control form-control-sm" id="hist-status" readonly style="background-color: #f8fafc; font-weight: 600;">
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Action Buttons -->
+                  <div class="col-md-4 d-flex align-items-end gap-2">
+                    <button type="submit" class="btn btn-primary flex-grow-1" id="hist-submit-btn">
+                      <span class="btn-text"><i class="bi bi-upload"></i> <span id="hist-submit-text">Migrate</span></span>
+                      <span class="spinner-border spinner-border-sm d-none" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                      </span>
+                    </button>
+                    <button type="button" class="btn btn-outline-danger d-none" id="hist-cancel-btn" onclick="cancelEditHistoricalBalance()" title="Cancel Edit">
+                      <i class="bi bi-x-lg"></i> Cancel
+                    </button>
+                    <button type="button" class="btn btn-outline-secondary" onclick="resetHistoricalForm()" title="Reset Form">
+                      <i class="bi bi-arrow-counterclockwise"></i>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Validation Rules Accordion -->
+                <div class="accordion mt-3" id="validationRulesAccordion">
+                  <div class="accordion-item">
+                    <h2 class="accordion-header">
+                      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#validationRules">
+                        <i class="bi bi-shield-check me-2"></i> Validation Rules & CTO Availment Guidelines
+                      </button>
+                    </h2>
+                    <div id="validationRules" class="accordion-collapse collapse" data-bs-parent="#validationRulesAccordion">
+                      <div class="accordion-body">
+                        <h6>Migration Validation Rules:</h6>
+                        <ol class="mb-3 ps-3">
+                          <li class="mb-2"><strong>Monthly Cap:</strong> COC Earned ≤ 40 hours per month</li>
+                          <li class="mb-2"><strong>Used vs Earned:</strong> COC Used must be ≤ COC Earned</li>
+                          <li class="mb-2"><strong>Issuance Date:</strong> Must be between last day of earned month and last day of the month after (e.g., Jan 31 to Feb 29 for January, or Dec 31 to Jan 31 for December)</li>
+                          <li class="mb-2"><strong>Total Balance Cap:</strong> Adding remaining hours cannot exceed employee's 120-hour total balance</li>
+                          <li class="mb-0"><strong>No Duplicates:</strong> Cannot log multiple historical balances for the same employee + month + year combination. Prevents double-entry</li>
+                        </ol>
+                        <h6>CTO Availment (4/8 Hour Blocks):</h6>
+                        <ul class="mb-0 ps-3">
+                          <li class="mb-2"><strong>Block Requirement:</strong> CTO may be availed in blocks of 4 or 8 hours only</li>
+                          <li class="mb-2"><strong>Continuous Use:</strong> Up to maximum of 5 consecutive days per single availment</li>
+                          <li class="mb-0"><strong>Staggered Use:</strong> Can be used on staggered basis within the year</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <!-- Historical Balance List Tab -->
+        <div class="tab-pane fade" id="content-list-hist" role="tabpanel">
+          <div class="card">
+            <div class="card-header">
+              <h5 class="mb-0"><i class="bi bi-list-ul"></i> Historical Balance List</h5>
+            </div>
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table table-hover table-sm">
+                  <thead>
+                    <tr>
+                      <th>Month/Year</th>
+                      <th>Earned</th>
+                      <th>Used</th>
+                      <th>Remaining</th>
+                      <th>Issued</th>
+                      <th>Valid Until</th>
+                      <th>Status</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="historicalBalancesTableBody">
+                    <tr><td colspan="8" class="text-center text-muted">Select an employee above to view their historical balances</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      </div>
+
+      <!-- Employees Without Historical Balance -->
+      <div class="row mt-4">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-header">
+              <h5 class="mb-0"><i class="bi bi-exclamation-triangle-fill text-warning"></i> Employees Without Historical Balance</h5>
+            </div>
+            <div class="card-body">
+              <div id="employees-no-hist-list" class="d-flex flex-wrap gap-2">
+                <span class="text-muted">Loading...</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- HELP & INSTRUCTIONS PAGE -->
+    <!-- ============================================ -->
+    <div id="page-help" class="page-view">
+      <h2 class="page-title"><i class="bi bi-question-circle"></i> Help & Instructions</h2>
+
+      <!-- About This System -->
+      <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+          <h5 class="mb-0"><i class="bi bi-info-circle"></i> About This System</h5>
+        </div>
+        <div class="card-body">
+          <h6 class="fw-bold">CompTime Tracker - COC Management System</h6>
+          <p class="mb-2">
+            This system is designed to manage <strong>Compensatory Overtime Credits (COC)</strong> for employees.
+            It tracks overtime work, generates certificates, and manages CTO (Compensatory Time Off) applications
+            with full audit trails and expiry management.
+          </p>
+          <p class="mb-0">
+            <strong>Key Features:</strong>
+          </p>
+          <ul class="mb-0">
+            <li>Overtime logging and certification</li>
+            <li>Automatic COC expiry tracking (1 year from issuance)</li>
+            <li>CTO application with FIFO (First In, First Out) deduction</li>
+            <li>Employee ledger with complete transaction history</li>
+            <li>Professional Excel export for reporting</li>
+            <li>Real-time dashboard and alerts</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Quick Start Guide -->
+      <div class="card mb-4">
+        <div class="card-header bg-success text-white">
+          <h5 class="mb-0"><i class="bi bi-play-circle"></i> Quick Start Guide</h5>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-6">
+              <h6 class="fw-bold text-primary">1. Add Employees</h6>
+              <p class="small">Go to <strong>Employees</strong> menu → Click <strong>Add Employee</strong> → Fill in employee details (First Name, Last Name, Office, Position)</p>
+
+              <h6 class="fw-bold text-primary mt-3">2. Log Overtime</h6>
+              <p class="small">Go to <strong>COC → Log Overtime</strong> → Select employee and month/year → Enter overtime details (Date, Day Type, Time In/Out) → Save</p>
+
+              <h6 class="fw-bold text-primary mt-3">3. Generate COC Certificate</h6>
+              <p class="small">Go to <strong>COC → Generate Certificate</strong> → Select employee and month → Click "Generate Certificate" → Certificate with PDF will be created</p>
+            </div>
+            <div class="col-md-6">
+              <h6 class="fw-bold text-primary">4. Apply for CTO</h6>
+              <p class="small">Go to <strong>COC → CTO Application</strong> → Select employee and filing date → Choose inclusive dates → Select whole or half day per date → Submit</p>
+
+              <h6 class="fw-bold text-primary mt-3">5. View Employee Ledger</h6>
+              <p class="small">Go to <strong>COC → View Employee Ledger</strong> → Select employee → View all transactions (COC earned and CTO used) → Export to Excel</p>
+
+              <h6 class="fw-bold text-primary mt-3">6. Check Dashboard</h6>
+              <p class="small">The <strong>Dashboard</strong> shows: Total COC hours, Active employees, Uncertified logs, and COC expiring in 30 days</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Detailed Instructions -->
+      <div class="card mb-4">
+        <div class="card-header bg-info text-white">
+          <h5 class="mb-0"><i class="bi bi-book"></i> Detailed Instructions</h5>
+        </div>
+        <div class="card-body">
+          <div class="accordion" id="helpAccordion">
+
+            <!-- Managing Employees -->
+            <div class="accordion-item">
+              <h2 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseEmployees">
+                  <i class="bi bi-people-fill me-2"></i> Managing Employees
+                </button>
+              </h2>
+              <div id="collapseEmployees" class="accordion-collapse collapse" data-bs-parent="#helpAccordion">
+                <div class="accordion-body">
+                  <p><strong>Adding Employees:</strong></p>
+                  <ol>
+                    <li>Click <strong>Employees</strong> in the navigation menu</li>
+                    <li>Click the <strong>Add Employee</strong> button</li>
+                    <li>Fill in: First Name, Last Name, Middle Name (optional), Suffix (optional)</li>
+                    <li>Select Office and Position from dropdowns</li>
+                    <li>Set Status (Active/Inactive)</li>
+                    <li>Click <strong>Save</strong></li>
+                  </ol>
+                  <p><strong>Editing Employees:</strong> Click the pencil icon next to the employee name, modify details, and save.</p>
+                  <p><strong>Note:</strong> Employee IDs are auto-generated (e.g., EMP_001, EMP_002)</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Logging Overtime -->
+            <div class="accordion-item">
+              <h2 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOvertime">
+                  <i class="bi bi-clock-history me-2"></i> Logging Overtime
+                </button>
+              </h2>
+              <div id="collapseOvertime" class="accordion-collapse collapse" data-bs-parent="#helpAccordion">
+                <div class="accordion-body">
+                  <ol>
+                    <li>Go to <strong>COC → Log Overtime</strong></li>
+                    <li>Select the employee from the dropdown</li>
+                    <li>Choose the Month and Year</li>
+                    <li>Click <strong>Add Entry</strong> for each overtime day</li>
+                    <li>Fill in: Date, Day Type (Regular/Weekend/Holiday), Time In/Out (AM and PM)</li>
+                    <li>System automatically calculates total hours and COC earned</li>
+                    <li>Click <strong>Save All Entries</strong></li>
+                  </ol>
+                  <p><strong>Important:</strong> Overtime logs must be certified before COC can be used!</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Generating Certificates -->
+            <div class="accordion-item">
+              <h2 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCertificate">
+                  <i class="bi bi-file-earmark-check me-2"></i> Generating COC Certificates
+                </button>
+              </h2>
+              <div id="collapseCertificate" class="accordion-collapse collapse" data-bs-parent="#helpAccordion">
+                <div class="accordion-body">
+                  <p><strong>By Employee (Individual):</strong></p>
+                  <ol>
+                    <li>Go to <strong>COC → Generate Certificate → By Employee</strong> tab</li>
+                    <li>Select employee from dropdown</li>
+                    <li>Uncertified months will appear automatically</li>
+                    <li>Click "Generate" next to the month</li>
+                    <li>Enter Date of Issuance (usually first day of following month)</li>
+                    <li>Click <strong>Generate Certificate & PDF</strong></li>
+                    <li>PDF and summary will be generated automatically</li>
+                  </ol>
+                  <p><strong>By Batch (Multiple Employees):</strong></p>
+                  <ol>
+                    <li>Go to <strong>COC → Generate Certificate → By Batch</strong> tab</li>
+                    <li>Select Month and Year</li>
+                    <li>Click <strong>Load Employees</strong></li>
+                    <li>Check the employees you want to generate certificates for</li>
+                    <li>Enter Date of Issuance</li>
+                    <li>Click <strong>Generate Selected Certificates</strong></li>
+                  </ol>
+                  <p><strong>Note:</strong> Generated certificates are valid for 1 year from date of issuance. COC expires after this period!</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- CTO Application -->
+            <div class="accordion-item">
+              <h2 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCTO">
+                  <i class="bi bi-calendar-check me-2"></i> CTO Application
+                </button>
+              </h2>
+              <div id="collapseCTO" class="accordion-collapse collapse" data-bs-parent="#helpAccordion">
+                <div class="accordion-body">
+                  <p><strong>Filing a CTO Application:</strong></p>
+                  <ol>
+                    <li>Go to <strong>COC → CTO Application → Log CTO Application</strong> tab</li>
+                    <li>Select employee and filing date</li>
+                    <li>System shows available COC balance</li>
+                    <li>Select inclusive dates (From - To)</li>
+                    <li>For each date, choose: Whole Day (8 hrs) or Half Day (4 hrs)</li>
+                    <li>System calculates total hours to be used</li>
+                    <li>Click <strong>Log CTO</strong></li>
+                  </ol>
+                  <p><strong>Important:</strong> System uses FIFO (First In, First Out) - oldest COC is used first!</p>
+                  <p><strong>Editing a CTO:</strong> Go to <strong>List of CTO Applications</strong> tab → Click pencil icon → Modify hours → Update</p>
+                  <p><strong>Cancelling a CTO:</strong> Go to <strong>List of CTO Applications</strong> tab → Click X icon → Enter reason → Confirm</p>
+                  <p class="mb-0"><strong>Note:</strong> When cancelling, hours are restored to the same COC batches. If COC expired, hours are forfeited!</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Employee Ledger -->
+            <div class="accordion-item">
+              <h2 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseLedger">
+                  <i class="bi bi-journal-text me-2"></i> Employee Ledger
+                </button>
+              </h2>
+              <div id="collapseLedger" class="accordion-collapse collapse" data-bs-parent="#helpAccordion">
+                <div class="accordion-body">
+                  <ol>
+                    <li>Go to <strong>COC → View Employee Ledger</strong></li>
+                    <li>Select employee from dropdown</li>
+                    <li>View complete transaction history:
+                      <ul>
+                        <li><strong>Earned:</strong> COC certificates issued</li>
+                        <li><strong>Used:</strong> CTO applications filed</li>
+                        <li><strong>Balance:</strong> Running balance after each transaction</li>
+                      </ul>
+                    </li>
+                    <li>Click <strong>Export to Excel</strong> for formatted report</li>
+                  </ol>
+                  <p><strong>View Details:</strong> Click "View" button next to any transaction to see complete details including deductions from specific COC batches.</p>
+                  <p class="mb-0"><strong>Cancelled CTOs:</strong> Shown with red "CANCELLED" badge and yellow background</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Reports & Dashboard -->
+            <div class="accordion-item">
+              <h2 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseReports">
+                  <i class="bi bi-bar-chart-line me-2"></i> Reports & Dashboard
+                </button>
+              </h2>
+              <div id="collapseReports" class="accordion-collapse collapse" data-bs-parent="#helpAccordion">
+                <div class="accordion-body">
+                  <p><strong>Dashboard:</strong> Shows real-time statistics:</p>
+                  <ul>
+                    <li><strong>Total COC:</strong> Sum of all active COC hours</li>
+                    <li><strong>Active Employees:</strong> Number of employees with active status</li>
+                    <li><strong>Uncertified Logs:</strong> Overtime entries not yet certified</li>
+                    <li><strong>Expiring in 30 Days:</strong> COC hours expiring soon</li>
+                  </ul>
+                  <p><strong>Reports Page:</strong> Generate various reports:</p>
+                  <ul>
+                    <li>Summary of COC Balances per Employee</li>
+                    <li>CTO Applications Report</li>
+                    <li>Expiring Credits Report</li>
+                  </ul>
+                  <p class="mb-0"><strong>Excel Export:</strong> All reports can be exported to Excel for printing or sharing</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- System Configuration -->
+            <div class="accordion-item">
+              <h2 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseConfig">
+                  <i class="bi bi-gear-fill me-2"></i> System Configuration
+                </button>
+              </h2>
+              <div id="collapseConfig" class="accordion-collapse collapse" data-bs-parent="#helpAccordion">
+                <div class="accordion-body">
+                  <p><strong>Libraries (Master → Libraries):</strong></p>
+                  <ul>
+                    <li><strong>Offices:</strong> Add/Edit/Delete office names</li>
+                    <li><strong>Positions:</strong> Add/Edit/Delete position titles</li>
+                  </ul>
+                  <p><strong>Signatory (Master → System Configuration):</strong></p>
+                  <ul>
+                    <li>Set the name and position of the signatory for certificates</li>
+                    <li>This appears on all generated COC certificates</li>
+                  </ul>
+                  <p><strong>Historical Balance (Master → Historical Balance):</strong></p>
+                  <ul>
+                    <li>Add COC balances from previous system (migration)</li>
+                    <li>Required for employees with existing COC before system implementation</li>
+                  </ul>
+                  <p><strong>Holidays (Master → System Configuration):</strong></p>
+                  <ul>
+                    <li>Add regular and special non-working holidays</li>
+                    <li>Set as recurring for annual holidays (e.g., New Year, Christmas)</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- Important Reminders -->
+      <div class="card">
+        <div class="card-header bg-warning">
+          <h5 class="mb-0"><i class="bi bi-exclamation-triangle-fill"></i> Important Reminders</h5>
+        </div>
+        <div class="card-body">
+          <ul class="mb-0">
+            <li><strong>COC Validity:</strong> All COC certificates are valid for 1 year from date of issuance. After expiry, unused hours are forfeited.</li>
+            <li><strong>FIFO Deduction:</strong> System automatically uses oldest COC first when filing CTO applications.</li>
+            <li><strong>Certification Required:</strong> Overtime logs must be certified (generate certificate) before COC can be used for CTO.</li>
+            <li><strong>Cancellation:</strong> When cancelling CTO, hours are restored to original COC batches. If expired, hours are NOT restored.</li>
+            <li><strong>Data Backup:</strong> Regularly export employee ledgers for backup and record-keeping.</li>
+            <li><strong>Date Format:</strong> System uses MM/DD/YYYY format for date entry and display.</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  </div>

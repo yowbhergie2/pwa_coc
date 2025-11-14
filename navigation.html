@@ -1,0 +1,45 @@
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#"><i class="bi bi-clock-history"></i> CompTime Tracker</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link active" href="#" data-page="dashboard">Dashboard</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#" data-page="employees">Employees</a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">COC</a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="#" data-page="log-overtime">Log Overtime</a></li>
+              <li><a class="dropdown-item" href="#" data-page="generate-cert">Generate Certificate</a></li>
+              <li><a class="dropdown-item" href="#" data-page="view-certificates">View Certificates</a></li>
+              <li><a class="dropdown-item" href="#" data-page="log-cto">CTO Application</a></li>
+              <li><a class="dropdown-item" href="#" data-page="employee-ledger">View Employee Ledger</a></li>
+            </ul>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Master</a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="#" data-page="libraries">Libraries</a></li>
+              <li><a class="dropdown-item" href="#" data-page="configuration">System Configuration</a></li>
+              <li><a class="dropdown-item" href="#" data-page="historical-balance">Historical Balance</a></li>
+            </ul>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#" data-page="help"><i class="bi bi-question-circle"></i> Help</a>
+          </li>
+        </ul>
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <span class="user-info" id="userEmail"><i class="bi bi-person-circle"></i> Loading...</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
