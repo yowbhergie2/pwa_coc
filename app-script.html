@@ -5997,4 +5997,122 @@
         }
       });
     });
+
+    // ============================================
+    // PWA: SERVICE WORKER REGISTRATION
+    // ============================================
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./service-worker.js')
+          .then(registration => {
+            console.log('[PWA] Service Worker registered successfully:', registration.scope);
+
+            // Check for updates periodically
+            setInterval(() => {
+              registration.update();
+            }, 60000); // Check every minute
+
+            // Listen for updates
+            registration.addEventListener('updatefound', () => {
+              const newWorker = registration.installing;
+
+              newWorker.addEventListener('statechange', () => {
+                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                  // New service worker available
+                  console.log('[PWA] New version available! Reload to update.');
+
+                  // Show a simple notification to user
+                  if (typeof Modal !== 'undefined' && Modal.info) {
+                    Modal.info(
+                      'Update Available',
+                      'A new version of CompTime Tracker is available. Please refresh the page to update.',
+                      () => {
+                        // Tell the new service worker to skip waiting
+                        newWorker.postMessage({ type: 'SKIP_WAITING' });
+                        window.location.reload();
+                      }
+                    );
+                  }
+                }
+              });
+            });
+          })
+          .catch(error => {
+            console.log('[PWA] Service Worker registration failed:', error);
+          });
+
+        // Reload page when service worker takes control
+        let refreshing = false;
+        navigator.serviceWorker.addEventListener('controllerchange', () => {
+          if (refreshing) return;
+          refreshing = true;
+          window.location.reload();
+        });
+      });
+    }
+
+    // ============================================
+    // PWA: INSTALL PROMPT HANDLER
+    // ============================================
+    let deferredPrompt;
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      // Prevent the mini-infobar from appearing on mobile
+      e.preventDefault();
+
+      // Stash the event so it can be triggered later
+      deferredPrompt = e;
+
+      console.log('[PWA] Install prompt available');
+
+      // Optionally, you can show a custom install button here
+      // For now, users can install via browser menu
+    });
+
+    window.addEventListener('appinstalled', () => {
+      console.log('[PWA] App installed successfully');
+      deferredPrompt = null;
+
+      if (typeof Modal !== 'undefined' && Modal.success) {
+        Modal.success(
+          'App Installed!',
+          'CompTime Tracker has been installed on your device. You can now access it from your home screen or app launcher.'
+        );
+      }
+    });
+
+    // Optional: Function to trigger install prompt programmatically
+    window.showInstallPrompt = async () => {
+      if (!deferredPrompt) {
+        console.log('[PWA] Install prompt not available');
+        return;
+      }
+
+      // Show the install prompt
+      deferredPrompt.prompt();
+
+      // Wait for the user's response
+      const { outcome } = await deferredPrompt.userChoice;
+      console.log(`[PWA] User response to install prompt: ${outcome}`);
+
+      // Clear the deferred prompt
+      deferredPrompt = null;
+    };
+
+    // ============================================
+    // PWA: ONLINE/OFFLINE STATUS
+    // ============================================
+    window.addEventListener('online', () => {
+      console.log('[PWA] Back online');
+      if (typeof Modal !== 'undefined' && Modal.success) {
+        Modal.success('Connection Restored', 'You are back online!');
+      }
+    });
+
+    window.addEventListener('offline', () => {
+      console.log('[PWA] Gone offline');
+      if (typeof Modal !== 'undefined' && Modal.info) {
+        Modal.info('Offline Mode', 'You are currently offline. Some features may be limited.');
+      }
+    });
   </script>
